@@ -163,7 +163,7 @@ class JobStreetSpider(scrapy.Spider):
     name = "jobstreet"
 
     def start_requests(self):
-        total_pages = 2  # self.get_total_pages()
+        total_pages = self.get_total_pages()
 
         urls = [f"{self.URL}?pg={i}" for i in range(1, total_pages + 1)]
         for url in urls:
