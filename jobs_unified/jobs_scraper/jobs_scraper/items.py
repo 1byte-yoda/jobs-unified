@@ -28,6 +28,7 @@ class JobStreetItem(Item):
     company_size = Field()
     company_telephone_number = Field()
     company_website = Field()
+    company_working_hours = Field()
     company_video_url = Field()
 
     # JobHeader
@@ -71,7 +72,7 @@ class JobStreetItem(Item):
     job_why_join_us = Field()
 
     # Location
-    location = Field()
+    job_location = Field()
 
     # Housekeeping Fields
     url = Field()
