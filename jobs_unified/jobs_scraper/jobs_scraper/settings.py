@@ -62,9 +62,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "jobs_scraper.pipelines.JobsScraperPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   # "jobs_scraper.pipelines.JsonWriterPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -90,4 +90,25 @@ ROBOTSTXT_OBEY = False
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-FEED_EXPORT_ENCODING = "utf-8"
+# FEED_EXPORT_ENCODING = "utf-8"
+
+FEED_URI_PARAMS = "jobs_scraper.utils.uri_params"
+
+FEED_EXPORTERS = {"parquet": "zuinnote.scrapy.contrib.bigexporters.ParquetItemExporter"}
+FEEDS = {
+   "/tmp/%(timestamp_now_filepath)s/%(timestamp_now_filename)s": {
+      "format": "parquet",
+      "encoding": "utf8",
+      "store_empty": False,
+      "item_export_kwargs": {
+         "compression": "SNAPPY",  # compression to be used in Parquet, UNCOMPRESSED, GZIP, SNAPPY (package: python-snappy), LZO (package: lzo), BROTLI (package: brotli), LZ4 (package: lz4), ZSTD (package: zstandard) note: compression may require additional libraries
+         "times": "int96",  # type for times int64 or int96, spark is int96 only
+         "hasnulls": True,  # can contain nulls
+         "convertallstrings": False,  # convert all values to string. recommended for compatibility reasons, conversion to native types is suggested as part of the ingestion in the processing platform
+         "writeindex": False,  # write index as extra column
+         "objectencoding": "infer",  # schema of data
+         "rowgroupoffset": 50000000,  # offset row groups
+         "items_rowgroup": 10000,  # how many items per rowgroup, should be several thousands, e.g. between 5,000 and 30,000. The more rows the higher the memory consumption and the better the compression on the final parquet file
+      },
+   }
+}
