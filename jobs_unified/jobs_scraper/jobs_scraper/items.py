@@ -12,47 +12,13 @@ class JobStreetItem(Item):
     advertisement_id = Field()
 
     # ApplyUrl
-    apply_url_is_external = Field()
     apply_url = Field()
 
     # CompanyDetail
-    company_overview = Field()
-    company_photos = Field()
-    company_avg_process_time = Field()
-    company_dress_code = Field()
-    company_employment_agency_number = Field()
-    company_employment_agency_personnel_number = Field()
-    company_facebook = Field()
-    company_nearby_locations = Field()
-    company_registration_no = Field()
-    company_size = Field()
-    company_telephone_number = Field()
-    company_website = Field()
-    company_working_hours = Field()
-    company_video_url = Field()
+    company_detail = Field()
 
     # JobHeader
-    job_header_banner_url_large = Field()
-    job_header_company_advertiser_id = Field()
-    job_header_company_name = Field()
-    job_header_company_slug = Field()
-    job_header_company_url = Field()
-    job_header_expiration_days = Field()
-    job_header_is_internship = Field()
-    job_header_job_title = Field()
-    job_header_logo_url_small = Field()
-    job_header_logo_url_medium = Field()
-    job_header_logo_url_normal = Field()
-    job_header_logo_url_large = Field()
-    job_header_review = Field()
-    job_header_posted_at = Field()
-    job_header_posted_date_humanized = Field()
-    job_header_salary_currency = Field()
-    job_header_salary_extra_info = Field()
-    job_header_salary_is_visible = Field()
-    job_header_salary_max = Field()
-    job_header_salary_min = Field()
-    job_header_salary_type = Field()
+    job_header = Field()
 
     # Job
     job_id = Field()
@@ -66,10 +32,7 @@ class JobStreetItem(Item):
     job_sub_account = Field()
 
     # JobDetail
-    job_description = Field()
-    job_requirements = Field()
-    job_summary = Field()
-    job_why_join_us = Field()
+    job_detail = Field()
 
     # Location
     job_location = Field()

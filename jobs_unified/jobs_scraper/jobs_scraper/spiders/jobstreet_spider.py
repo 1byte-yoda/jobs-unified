@@ -1,4 +1,5 @@
 import datetime
+import json
 from dataclasses import dataclass
 
 import scrapy
@@ -162,10 +163,9 @@ class JobStreetSpider(scrapy.Spider):
     name = "jobstreet"
 
     def start_requests(self):
-        url = self.URL
-        total_pages = self.get_total_pages()
+        total_pages = 2  # self.get_total_pages()
 
-        urls = [f"{url}?pg={i}" for i in range(1, total_pages + 1)]
+        urls = [f"{self.URL}?pg={i}" for i in range(1, total_pages + 1)]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -180,7 +180,7 @@ class JobStreetSpider(scrapy.Spider):
         job_links = response.xpath("//article[contains(@data-automation,'job-card-')]//a[contains(@href, 'job/')]//@href").extract()
         job_street_gql_url = "https://xapi.supercharge-srp.co/job-search/graphql?country=ph&isSmartSearch=true"
 
-        for url in [job_links[0]]:
+        for url in job_links:
             url_path, _ = url.split("?")
             job_id = url_path.split("-")[-1]
             yield JsonRequest(job_street_gql_url, method="POST", data=JobStreetGqlConfig.to_dict(job_id=job_id), callback=self.parse_job_card)
@@ -237,57 +237,20 @@ class JobStreetSpider(scrapy.Spider):
     @staticmethod
     def load_apply_url_fields(loader: ItemLoader, item_json: dict):
         apply_url = item_json["data"]["jobDetail"]["applyUrl"]
-        loader.add_value(field_name="apply_url_is_external", value=apply_url["isExternal"])
-        loader.add_value(field_name="apply_url", value=apply_url["url"])
+        loader.add_value(field_name="apply_url", value=apply_url)
 
     @staticmethod
     def load_apply_company_details_fields(loader: ItemLoader, item_json: dict):
         company_detail = item_json["data"]["jobDetail"]["companyDetail"]
-        loader.add_value(field_name="company_overview", value=company_detail["companyOverview"]["html"])
-        loader.add_value(field_name="company_photos", value=company_detail["companyPhotos"])
-        loader.add_value(field_name="company_avg_process_time", value=company_detail["companySnapshot"]["avgProcessTime"])
-        loader.add_value(field_name="company_dress_code", value=company_detail["companySnapshot"]["dressCode"])
-        loader.add_value(field_name="company_employment_agency_number", value=company_detail["companySnapshot"]["employmentAgencyNumber"])
-        loader.add_value(field_name="company_employment_agency_personnel_number", value=company_detail["companySnapshot"]["employmentAgencyPersonnelNumber"])
-        loader.add_value(field_name="company_facebook", value=company_detail["companySnapshot"]["facebook"])
-        loader.add_value(field_name="company_nearby_locations", value=company_detail["companySnapshot"]["nearbyLocations"])
-        loader.add_value(field_name="company_registration_no", value=company_detail["companySnapshot"]["registrationNo"])
-        loader.add_value(field_name="company_size", value=company_detail["companySnapshot"]["size"])
-        loader.add_value(field_name="company_telephone_number", value=company_detail["companySnapshot"]["telephoneNumber"])
-        loader.add_value(field_name="company_website", value=company_detail["companySnapshot"]["website"])
-        loader.add_value(field_name="company_working_hours", value=company_detail["companySnapshot"]["workingHours"])
-        loader.add_value(field_name="company_video_url", value=company_detail["videoUrl"])
+        loader.add_value(field_name="company_detail", value=json.dumps(company_detail))
 
     @staticmethod
     def load_job_header_fields(loader: ItemLoader, item_json: dict):
         job_header = item_json["data"]["jobDetail"]["header"]
-        loader.add_value(field_name="job_header_banner_url_large", value=job_header["banner"]["bannerUrls"]["large"])
-        loader.add_value(field_name="job_header_company_advertiser_id", value=job_header["company"]["advertiserId"])
-        loader.add_value(field_name="job_header_company_name", value=job_header["company"]["name"])
-        loader.add_value(field_name="job_header_company_slug", value=job_header["company"]["slug"])
-        loader.add_value(field_name="job_header_company_url", value=job_header["company"]["url"])
-        loader.add_value(field_name="job_header_expiration_days", value=job_header["expiration"])
-        loader.add_value(field_name="job_header_is_internship", value=job_header["isInternship"])
-        loader.add_value(field_name="job_header_job_title", value=job_header["jobTitle"])
-        loader.add_value(field_name="job_header_logo_url_small", value=job_header["logoUrls"]["small"])
-        loader.add_value(field_name="job_header_logo_url_medium", value=job_header["logoUrls"]["medium"])
-        loader.add_value(field_name="job_header_logo_url_normal", value=job_header["logoUrls"]["normal"])
-        loader.add_value(field_name="job_header_logo_url_large", value=job_header["logoUrls"]["large"])
-        loader.add_value(field_name="job_header_review", value=job_header["review"])
-        loader.add_value(field_name="job_header_posted_at", value=job_header["postedAt"])
-        loader.add_value(field_name="job_header_posted_date_humanized", value=job_header["postedDate"])
-        loader.add_value(field_name="job_header_salary_currency", value=job_header["salary"]["currency"])
-        loader.add_value(field_name="job_header_salary_extra_info", value=job_header["salary"]["extraInfo"])
-        loader.add_value(field_name="job_header_salary_is_visible", value=job_header["salary"]["isVisible"])
-        loader.add_value(field_name="job_header_salary_max", value=job_header["salary"]["max"])
-        loader.add_value(field_name="job_header_salary_min", value=job_header["salary"]["min"])
-        loader.add_value(field_name="job_header_salary_type", value=job_header["salary"]["type"])
+        loader.add_value(field_name="job_header", value=json.dumps(job_header))
 
     @staticmethod
     def load_job_detail_fields(loader: ItemLoader, item_json: dict):
         job_detail = item_json["data"]["jobDetail"]
-        loader.add_value(field_name="job_description", value=job_detail["jobDetail"]["jobDescription"]["html"])
-        loader.add_value(field_name="job_requirements", value=job_detail["jobDetail"]["jobRequirement"])
-        loader.add_value(field_name="job_summary", value=job_detail["jobDetail"]["summary"])
-        loader.add_value(field_name="job_why_join_us", value=job_detail["jobDetail"]["whyJoinUs"])
-        loader.add_value(field_name="job_location", value=job_detail["location"])
+        loader.add_value(field_name="job_detail", value=json.dumps(job_detail["jobDetail"]))
+        loader.add_value(field_name="job_location", value=json.dumps(job_detail["location"]))
