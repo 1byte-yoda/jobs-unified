@@ -262,6 +262,6 @@ class JobStreetSpider(scrapy.Spider):
         loader.add_value(field_name="project", value=self.settings.get("BOT_NAME"))
         loader.add_value(field_name="spider", value=self.name)
         loader.add_value(field_name="server", value="local")  # socket.gethostname()
-        loader.add_value(field_name="date", value=datetime.datetime.now())
+        loader.add_value(field_name="date", value=datetime.datetime.now().isoformat())
 
         yield loader.load_item()
