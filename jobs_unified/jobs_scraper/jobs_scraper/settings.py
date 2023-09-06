@@ -95,6 +95,8 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_URI_PARAMS = "jobs_scraper.utils.uri_params"
 
 FEED_EXPORTERS = {"parquet": "zuinnote.scrapy.contrib.bigexporters.ParquetItemExporter"}
+
+# TODO: Use Azure Datalake Gen2 container
 FEEDS = {
    "/tmp/%(timestamp_now_filepath)s/%(timestamp_now_filename)s": {
       "format": "parquet",
