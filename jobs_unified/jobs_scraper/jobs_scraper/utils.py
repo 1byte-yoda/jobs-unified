@@ -11,6 +11,6 @@ def uri_params(params: dict, spider: Spider) -> dict:
 
     return {
         **params,
-        "timestamp_now_filepath": f"{spider.name}/bronze/{timestamp_now_fp}",
+        "timestamp_now_filepath": f"bronze/{spider.name}/{timestamp_now_fp}",
         "timestamp_now_filename": f"{spider.name}-{uuid4()}-{timestamp_now_fp.replace('/', '')}.{file_type}"
     }

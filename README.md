@@ -119,7 +119,13 @@ sound decision and use that in their competitive advantage.
 - Indeed
   - API Request + XPath
 - JobStreet
-  - API Request + XPath
+  - The data was parsed from a paginated Graphql API which returns json data.
+  - Each page is a json data consists of 30 jobs.
+  - Some fields of type json are flattened, but I retained some json fields in their original form as I want to also showcase how it can be transformed in the silver layer
+  but practically speaking, I would prefer to do all the data standardization in a centralize layer ie. silver layer so that modification can be done in a single place
+  - This will output a single file in `bronze/jobstreet/{yyyy}/{mm}/{dd}/{HHMM}/{spider.name}-{uuid4()}-{yyyymmddHHMM}.parquet` path with a disk size less than 100mb.
+  - If the file grew bigger and optimization is required to leverage ADLS gen2's performance, we can tweak the `FEED_EXPORT_BATCH_ITEM_COUNT` scrapy settings.
+  Or we can leave the data sharding/bucketing to the silver/gold layer
 - LinkedIn
   - HTML Request + XPath
 - FoundIt
