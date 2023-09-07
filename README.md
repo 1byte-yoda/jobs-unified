@@ -117,7 +117,7 @@ sound decision and use that in their competitive advantage.
 
 ### Scrapy Spiders
 - Each job portal uses a dedicated Scrapy Spider to crawl for jobs
-- Each Spider will output a single file in `bronze/{JOB_PORTAL_NAME}/{yyyy}/{mm}/{dd}/{HHMM}/{spider.name}-{uuid4()}-{yyyymmddHHMM}.parquet` path with a disk size less than 100mb.
+- Each Spider will output a single file in `bronze/{JOB_PORTAL_NAME}/{yyyy}/{mm}/{dd}/{HHMM}/{spider.name}-{uuid4()}-{yyyymmddHHMM}.parquet` path with a disk size ~100mb.
 - If the file grew bigger and optimization is required to leverage ADLS gen2's performance, we can tweak the `FEED_EXPORT_BATCH_ITEM_COUNT` scrapy settings.
   Or we can leave the data sharding/bucketing to the silver/gold layer
 
@@ -129,6 +129,8 @@ sound decision and use that in their competitive advantage.
   - Indeed provides a REST endpoint to GET a specific Job, but I believe it requires the creation of custom Scrapy Middleware which will require tedious effort.
   - As a last resort, I found out an easier way. The HTML source of each job already contains the JSON data used to populate each field in the job posting which I can use to parse and query each field
   - Transformation wise, I have flattened the important JSON fields in question, and retain the rest of the fields – good to have.
+  - After carefully inspecting the JSON response, some fields were obviously used as a metadata to render Javascript objects, hence, only 21 out of 112 fields were retained which suites usability in this project.
+
 - JobStreet
   - The data was parsed from a paginated Graphql API which returns json data.
   - Each page is represented by a json data consists of 30 jobs.
@@ -137,5 +139,6 @@ sound decision and use that in their competitive advantage.
   
 - LinkedIn
   - HTML Request + XPath
+
 - FoundIt
   - API Request + XPath
