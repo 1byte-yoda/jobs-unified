@@ -6,7 +6,7 @@ from scrapy import Spider
 
 def uri_params(params: dict, spider: Spider) -> dict:
     now = datetime.now()
-    file_type = "parquet"
+    file_type = "snappy.parquet"
     timestamp_now_fp = f"{now.year}/{now.month}/{now.day}/{now.hour}/{now.minute}"
 
     return {
