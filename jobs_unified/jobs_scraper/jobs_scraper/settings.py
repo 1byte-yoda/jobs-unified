@@ -1,9 +1,15 @@
 import pathlib
+from chromedriver_py import binary_path
 
 BOT_NAME = "jobs_scraper"
 
 SPIDER_MODULES = ["jobs_scraper.spiders"]
 NEWSPIDER_MODULE = "jobs_scraper.spiders"
+
+# Selenium
+SELENIUM_DRIVER_NAME = 'chrome'
+SELENIUM_DRIVER_EXECUTABLE_PATH = binary_path
+SELENIUM_DRIVER_ARGUMENTS = ['--headless', 'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
@@ -23,7 +29,7 @@ PROXY_MODE = 0
 
 PROXY_LIST = pathlib.Path(__file__).parent.parent / pathlib.Path('jobs_scraper/proxy_list.txt')
 
-RANDOMIZE_DOWNLOAD_DELAY=True
+RANDOMIZE_DOWNLOAD_DELAY = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = True
 
@@ -31,10 +37,11 @@ COOKIES_DEBUG = True
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-    'jobs_scraper.middlewares.UserAgentRotatorMiddleware': 400,
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 90,
     'scrapy_proxies.RandomProxy': 100,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    'jobs_scraper.middlewares.UserAgentRotatorMiddleware': 400,
+    'scrapy_selenium.SeleniumMiddleware': 800
 }
 
 # Configure item pipelines
@@ -59,14 +66,6 @@ AUTOTHROTTLE_MAX_DELAY = 6
 
 # Enable showing throttling stats for every response received:
 AUTOTHROTTLE_DEBUG = False
-
-# Enable and configure HTTP caching (disabled by default)
-# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-# HTTPCACHE_ENABLED = True
-# HTTPCACHE_EXPIRATION_SECS = 0
-# HTTPCACHE_DIR = "httpcache"
-# HTTPCACHE_IGNORE_HTTP_CODES = []
-# HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
