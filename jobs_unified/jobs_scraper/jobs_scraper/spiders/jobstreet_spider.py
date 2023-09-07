@@ -1,5 +1,6 @@
 import datetime
 import json
+import socket
 from dataclasses import dataclass
 
 import scrapy
@@ -191,23 +192,26 @@ class JobStreetSpider(scrapy.Spider):
         loader = ItemLoader(item=JobStreetItem())
         loader.default_output_processor = TakeFirst()
 
-        # Job
-        self.load_job_fields(loader=loader, item_json=item_json)
+        is_json_parsable = item_json.get("data") and item_json["data"].get("jobDetail")
 
-        # ApplyUrl
-        self.load_apply_url_fields(loader=loader, item_json=item_json)
+        if is_json_parsable:
+            # Job
+            self.load_job_fields(loader=loader, item_json=item_json)
 
-        # CompanyDetail
-        self.load_apply_company_details_fields(loader=loader, item_json=item_json)
+            # ApplyUrl
+            self.load_apply_url_fields(loader=loader, item_json=item_json)
 
-        # JobHeader
-        self.load_job_header_fields(loader=loader, item_json=item_json)
+            # CompanyDetail
+            self.load_apply_company_details_fields(loader=loader, item_json=item_json)
 
-        # JobDetail
-        self.load_job_detail_fields(loader=loader, item_json=item_json)
+            # JobHeader
+            self.load_job_header_fields(loader=loader, item_json=item_json)
 
-        # Housekeeping
-        self.load_housekeeping_fields(loader=loader, response=response)
+            # JobDetail
+            self.load_job_detail_fields(loader=loader, item_json=item_json)
+
+            # Housekeeping
+            self.load_housekeeping_fields(loader=loader, response=response)
 
         yield loader.load_item()
 
@@ -215,24 +219,25 @@ class JobStreetSpider(scrapy.Spider):
         loader.add_value(field_name="url", value=response.url)
         loader.add_value(field_name="project", value=self.settings.get("BOT_NAME"))
         loader.add_value(field_name="spider", value=self.name)
-        loader.add_value(field_name="server", value="local")  # socket.gethostname()
+        loader.add_value(field_name="server", value=socket.gethostname())
         loader.add_value(field_name="date", value=datetime.datetime.now().isoformat())
 
     @staticmethod
     def load_job_fields(loader: ItemLoader, item_json: dict):
         job_detail = item_json["data"]["jobDetail"]
-        loader.add_value(field_name="job_id", value=job_detail["id"])
-        loader.add_value(field_name="job_is_classified", value=job_detail["isClassified"])
-        loader.add_value(field_name="job_is_confidential", value=job_detail["isConfidential"])
-        loader.add_value(field_name="job_is_expired", value=job_detail["isExpired"])
-        loader.add_value(field_name="job_title_slug", value=job_detail["jobTitleSlug"])
-        loader.add_value(field_name="job_page_url", value=job_detail["pageUrl"])
-        loader.add_value(field_name="job_show_more_jobs", value=job_detail["showMoreJobs"])
-        loader.add_value(field_name="job_source_country", value=job_detail["sourceCountry"])
-        loader.add_value(field_name="job_sub_account", value=job_detail["subAccount"])
-        loader.add_value(field_name="account_num", value=job_detail["accountNum"])
-        loader.add_value(field_name="ad_type", value=job_detail["adType"])
-        loader.add_value(field_name="advertisement_id", value=job_detail["advertisementId"])
+        if job_detail is not None:
+            loader.add_value(field_name="job_id", value=job_detail["id"])
+            loader.add_value(field_name="job_is_classified", value=job_detail["isClassified"])
+            loader.add_value(field_name="job_is_confidential", value=job_detail["isConfidential"])
+            loader.add_value(field_name="job_is_expired", value=job_detail["isExpired"])
+            loader.add_value(field_name="job_title_slug", value=job_detail["jobTitleSlug"])
+            loader.add_value(field_name="job_page_url", value=job_detail["pageUrl"])
+            loader.add_value(field_name="job_show_more_jobs", value=job_detail["showMoreJobs"])
+            loader.add_value(field_name="job_source_country", value=job_detail["sourceCountry"])
+            loader.add_value(field_name="job_sub_account", value=job_detail["subAccount"])
+            loader.add_value(field_name="account_num", value=job_detail["accountNum"])
+            loader.add_value(field_name="ad_type", value=job_detail["adType"])
+            loader.add_value(field_name="advertisement_id", value=job_detail["advertisementId"])
 
     @staticmethod
     def load_apply_url_fields(loader: ItemLoader, item_json: dict):
