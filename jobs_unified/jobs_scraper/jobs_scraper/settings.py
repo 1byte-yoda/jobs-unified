@@ -9,7 +9,7 @@ NEWSPIDER_MODULE = "jobs_scraper.spiders"
 # Selenium
 SELENIUM_DRIVER_NAME = 'chrome'
 SELENIUM_DRIVER_EXECUTABLE_PATH = binary_path
-SELENIUM_DRIVER_ARGUMENTS = ['--headless', 'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36']
+SELENIUM_DRIVER_ARGUMENTS = ['--headless=new', 'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
@@ -37,11 +37,12 @@ COOKIES_DEBUG = True
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 90,
-    'scrapy_proxies.RandomProxy': 100,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
-    'jobs_scraper.middlewares.UserAgentRotatorMiddleware': 400,
-    'scrapy_selenium.SeleniumMiddleware': 800
+    'jobs_scraper.middlewares.UserAgentRotatorMiddleware': 200,
+    'scrapy_selenium.SeleniumMiddleware': 470,
+    'jobs_scraper.middlewares.CloudFlareMiddleware': 560,
+    'scrapy_proxies.RandomProxy': 600,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 610,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 690,
 }
 
 # Configure item pipelines

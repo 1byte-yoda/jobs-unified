@@ -130,6 +130,8 @@ sound decision and use that in their competitive advantage.
   - As a last resort, I found out an easier way. The HTML source of each job already contains the JSON data used to populate each field in the job posting which I can use to parse and query each field
   - Transformation wise, I have flattened the important JSON fields in question, and retain the rest of the fields – good to have.
   - After carefully inspecting the JSON response, some fields were obviously used as a metadata to render Javascript objects, hence, only 21 out of 112 fields were retained which suites usability in this project.
+  - Even though the total jobs count is given, Indeed was limiting its pagination until page 70 only.
+  - Had to make a middleware that will handle cloudflare restrictions, I used the `cloudscraper` package to do it – redirecting every response into it whenever a cloudflare challenge occurs.
 
 - JobStreet
   - The data was parsed from a paginated Graphql API which returns json data.
