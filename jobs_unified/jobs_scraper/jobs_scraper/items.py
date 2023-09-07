@@ -9,26 +9,39 @@ class HousekeepingItem(Item):
     date = Field()
 
 
+# class IndeedItem(HousekeepingItem):
+#     # BaseSalary
+#     base_salary_currency = Field()
+#     base_salary_unit_text = Field()
+#     base_salary_min = Field()
+#     base_salary_max = Field()
+#
+#     # Job
+#     job_key = Field()
+#     job_date_posted = Field()
+#     job_description = Field()
+#     is_direct_apply = Field()
+#     job_employment_type = Field()
+#     job_title = Field()
+#
+#     # Location
+#     job_location_country = Field()
+#     job_location_locality = Field()
+#     job_location_region = Field()
+#
+#     date_valid_through = Field()
+
 class IndeedItem(HousekeepingItem):
     base_url = Field()
     benefits_model = Field()
-    categorized_attribute_model = Field()
-    cmi_job_category_model = Field()
-    commute_info_model = Field()
-    company_avatar_model = Field()
-    company_follow_form_model = Field()
-    company_tab_model = Field()
-    contact_person_model = Field()
     country = Field()
-    indeed_apply_button_container = Field()
+    hiring_insights_model = Field()
     job_info_wrapper_model = Field()
     job_key = Field()
     job_location = Field()
     job_metadata_footer_model = Field()
     job_title = Field()
     language = Field()
-    last_visit_time = Field()
-    lazy_providers = Field()
     locale = Field()
     request_path = Field()
     salary_info_model = Field()
