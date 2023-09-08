@@ -115,18 +115,37 @@ sound decision and use that in their competitive advantage.
 - Power BI
 - Devops?
 
-### Job Portals and Webscraping Strategies
+### Scrapy Spiders
+- Each job portal uses a dedicated Scrapy Spider to crawl for jobs
+- Each Spider will output a single file in `bronze/{JOB_PORTAL_NAME}/{yyyy}/{mm}/{dd}/{HHMM}/{spider.name}-{uuid4()}-{yyyymmddHHMM}.parquet` path with a disk size ~100mb.
+- If the file grew bigger and optimization is required to leverage ADLS gen2's performance, we can tweak the `FEED_EXPORT_BATCH_ITEM_COUNT` scrapy settings.
+  Or we can leave the data sharding/bucketing to the silver/gold layer
+
+#### Job Portals and Webscraping Strategies
 - Indeed
-  - API Request + XPath
+  - Indeed presents some scraping challenges along the way. It has a cloudflare protected server origin which makes it challenging to scrape, so I had to iterate and experiment a bit to make it work.
+  - Each page is represented by HTML and has 15 jobs.
+  - Before starting the traversal of job HTML elements to get the fields that I need, I tried to look first if they have a REST endpoint that will make my task easier.
+  - Indeed provides a REST endpoint to GET a specific Job, but I believe it requires the creation of custom Scrapy Middleware which will require tedious effort.
+  - As a last resort, I found out an easier way. The HTML source of each job already contains the JSON data used to populate each field in the job posting which I can use to parse and query each field
+  - Transformation wise, I have flattened the important JSON fields in question, and retain the rest of the fields – good to have.
+  - After carefully inspecting the JSON response, some fields were obviously used as a metadata to render Javascript objects, hence, only 21 out of 112 fields were retained which suites usability in this project.
+  - Even though the total jobs count is given, Indeed was limiting its pagination until page 70 only.
+  - How I managed to scrape their cloudflare protected website?
+    - I first tried `scrapy-selenium` package to render each page's content and then work on top of that
+    - I also had to make a middleware that will handle cloudflare restrictions, I initially used the `cloudscraper` package to do it – redirecting every response into it whenever a cloudflare challenge occurs.
+    Even so, cloudflare still detects the scraping activity, thus, blocked some of the requests sent over their `/viewJob` endpoint.
+    - After some research there is a more up-to-date robust solution called `FlareSolverr`. It starts a proxy server, and it waits for user requests in an idle state using few resources.
+    When some request arrives, it uses Selenium with the `undetected-chromedriver` to create a web browser (Chrome)
+
 - JobStreet
   - The data was parsed from a paginated Graphql API which returns json data.
-  - Each page is a json data consists of 30 jobs.
+  - Each page is represented by a json data consists of 30 jobs.
   - I retained all JSON fields of type JSON in their original form as I want to also showcase how it can be transformed in the silver layer
   but practically speaking, it is good to do all the data standardization in a centralize layer ie. silver layer so that modification can be done in a single place
-  - This will output a single file in `bronze/jobstreet/{yyyy}/{mm}/{dd}/{HHMM}/{spider.name}-{uuid4()}-{yyyymmddHHMM}.parquet` path with a disk size less than 100mb.
-  - If the file grew bigger and optimization is required to leverage ADLS gen2's performance, we can tweak the `FEED_EXPORT_BATCH_ITEM_COUNT` scrapy settings.
-  Or we can leave the data sharding/bucketing to the silver/gold layer
+  
 - LinkedIn
   - HTML Request + XPath
+
 - FoundIt
   - API Request + XPath

@@ -2,11 +2,14 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import logging
 
 from scrapy import signals
 
 # useful for handling different item types with a single interface
+from scrapy.http.response.html import HtmlResponse
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+import cloudscraper
 import numpy as np
 
 
@@ -26,3 +29,28 @@ class UserAgentRotatorMiddleware(UserAgentMiddleware):
         rand_agent_index = np.random.randint(len(self.user_agents))
         self.user_agent = self.user_agents[rand_agent_index]
         request.headers.setdefault('User-Agent', self.user_agent)
+
+
+class CloudFlareMiddleware:
+
+    @staticmethod
+    def is_cloudflare_challenged(response: HtmlResponse):
+        blocker_selectors = response.xpath("//span[@id='challenge-error-text']//text()").extract()
+        return len(blocker_selectors) > 0 or "/viewjob?" in response.url
+
+    def process_response(self, request, response, spider):
+        """Handles Scrapy response"""
+
+        if not self.is_cloudflare_challenged(response=response):
+            return response
+
+        logger = logging.getLogger('cloudflaremiddleware')
+
+        logger.debug(f"Cloudflare protection detected on {response.url}, trying to bypass...")
+
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(url=response.url)
+
+        logger.debug(f'Successfully bypassed the protection for {response.url}')
+
+        return HtmlResponse(url=response.url, body=response.text, encoding="utf-8")
