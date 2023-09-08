@@ -193,3 +193,19 @@ class JobStreetItem(HousekeepingItem):
 
     # Location
     job_location = Field()
+
+
+class LinkedinItem(HousekeepingItem):
+    company_img_url = Field()
+    company_url = Field()
+    company_name = Field()
+
+    job_title = Field()
+    location = Field()
+    job_description = Field()
+    posted_time_ago = Field()
+    num_applicants = Field()
+    seniority_level = Field()
+    employment_type = Field()
+    job_function = Field()
+    job_industries = Field()
