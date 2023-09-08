@@ -23,7 +23,7 @@ USER_AGENTS = [
 ROBOTSTXT_OBEY = False
 
 RETRY_TIMES = 15
-RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
+RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408, 429]
 PROXY_MODE = 0
 
 PROXY_LIST = pathlib.Path(__file__).parent.parent / pathlib.Path('jobs_scraper/proxy_list.txt')
