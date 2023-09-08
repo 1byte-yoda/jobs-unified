@@ -49,7 +49,7 @@ class IndeedFlareSpider(scrapy.Spider):
     def parse(self, response: HtmlResponse, **kwargs):
         json_response = response.json()
 
-        logger.debug(f"Scraped from <{json_response['solution']['status']}{json_response['solution']['url']}>")
+        logger.debug(f"Scraped from <{json_response['solution']['status']} {json_response['solution']['url']}>")
 
         response = HtmlResponse(url=json_response["solution"]["url"], body=json_response["solution"]["response"], encoding="utf-8")
 
@@ -64,7 +64,7 @@ class IndeedFlareSpider(scrapy.Spider):
     def parse_job_card(self, response: HtmlResponse):
         json_response = response.json()
 
-        logger.debug(f"Scraped from <{json_response['solution']['status']}{json_response['solution']['url']}>")
+        logger.debug(f"Scraped from <{json_response['solution']['status']} {json_response['solution']['url']}>")
 
         response = HtmlResponse(url=json_response["solution"]["url"], body=json_response["solution"]["response"], encoding="utf-8")
         data = re.findall(r'window._initialData=(\{.+?\});', response.text)
