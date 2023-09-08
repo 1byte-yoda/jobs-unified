@@ -36,7 +36,7 @@ class CloudFlareMiddleware:
     @staticmethod
     def is_cloudflare_challenged(response: HtmlResponse):
         blocker_selectors = response.xpath("//span[@id='challenge-error-text']//text()").extract()
-        return len(blocker_selectors) > 0
+        return len(blocker_selectors) > 0 or "/viewjob?" in response.url
 
     def process_response(self, request, response, spider):
         """Handles Scrapy response"""
