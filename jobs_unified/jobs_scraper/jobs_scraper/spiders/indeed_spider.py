@@ -9,10 +9,6 @@ from itemloaders.processors import TakeFirst
 from scrapy.loader import ItemLoader
 from scrapy.http.response.html import HtmlResponse
 from scrapy_selenium import SeleniumRequest
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from chromedriver_py import binary_path
 
 from jobs_scraper.items import IndeedItem
 
