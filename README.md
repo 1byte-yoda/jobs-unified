@@ -145,7 +145,11 @@ sound decision and use that in their competitive advantage.
   but practically speaking, it is good to do all the data standardization in a centralize layer ie. silver layer so that modification can be done in a single place
   
 - LinkedIn
-  - HTML Request + XPath
+  - Linkedin has a cumbersome jobs web portal which makes it challenging to use even the creative way of scraping like Selenium or the Cloudflare bypass tool I used – FlareSolver.
+  - I first tried using the Selenium driver to parse the html content and traverse the fields I need using xpath, but along the way, Linkedin is smart enough to detect a bot scraping their website
+  so, you'll get blocked for a while until it returns back – this resulted into a limited amount of jobs scraped. The retry mechanism in scrapy was not enough to solve this. I might try to tweak
+  the throttling mechanism a bit to see if it will work better.
+  - I tried a better approach for scraping linkedin jobs by using FlareSolverr: This didn't work as I keep on getting blocked with 403 response so I continued using the selenium linkedin scraper.
 
 - FoundIt
   - API Request + XPath
