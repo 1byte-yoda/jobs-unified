@@ -39,8 +39,8 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'jobs_scraper.middlewares.UserAgentRotatorMiddleware': 200,
     # 'jobs_scraper.middlewares.CloudFlareMiddleware': 480,
-    'scrapy_proxies.RandomProxy': 600,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 610,
+    # 'scrapy_proxies.RandomProxy': 600,
+    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 610,
     'scrapy_selenium.SeleniumMiddleware': 680,
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 690,
 }
