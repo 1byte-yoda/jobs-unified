@@ -152,4 +152,7 @@ sound decision and use that in their competitive advantage.
   - I tried a better approach for scraping linkedin jobs by using FlareSolverr: This didn't work as I keep on getting blocked with 403 response so I continued using the selenium linkedin scraper.
 
 - FoundIt
-  - API Request + XPath
+  - Foundit has a REST endpoint to get all of its jobs but the job description is not included there, so I had to parse it separately from their jobDetails API.
+  - The parameters of the endpoint can be tweaked to control how many data shall be returned per page.
+  - One challenge here – same with jobstreet – is the huge amount of nested fields in the json response in which I was required to deeply inspect to look for the fields I needed.
+  - In between job item json, there was a json representing an ad which does not have to do with the job posting, and I needed to skip those json data.
