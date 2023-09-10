@@ -2,6 +2,7 @@ import pytest
 import requests
 import json
 
+from jobs_scraper.spiders.foundit_spider import FoundItSpider
 from jobs_scraper.spiders.indeed_flare_scraper import IndeedFlareSpider
 from jobs_scraper.spiders.linkedin_spider import LinkedInSpider
 from jobs_unified.jobs_scraper.jobs_scraper.spiders.jobstreet_spider import JobStreetSpider
@@ -51,6 +52,7 @@ indeed_item_keys = ['base_url',
 
 
 linkedin_item_keys = ['seniority_level', 'employment_type', 'job_function', 'job_industries', 'url', 'project', 'spider', 'server', 'date']
+foundit_item_keys = ['company_name', 'company_url', 'job_id', 'job_title', 'job_exp', 'job_description', 'employment_types', 'locations', 'industries', 'skills', 'functions', 'maximum_salary', 'salary_currency', 'minimum_experience', 'maximum_experience', 'posted_by_text', 'total_applicants', 'created_at', 'updated_at', 'closed_at', 'url', 'project', 'spider', 'server', 'date']
 
 
 @pytest.mark.parametrize(
@@ -122,3 +124,23 @@ def test_linkedin_html_jobs_structure_did_not_changed(url, expected):
         job_card_response = requests.post(url=r.url, headers=flare_headers, json=post_body)
         linkedin_item: dict = next(spider.parse_job_item(response=HtmlResponse(url=r.url, body=job_card_response.text, encoding="utf-8")))
         assert list(linkedin_item.keys()) == expected
+
+
+@pytest.mark.parametrize(
+    "url,expected",
+    [(FoundItSpider.job_url,  foundit_item_keys)]
+)
+def test_gql_api_schema_did_not_changed(url, expected):
+    spider = FoundItSpider(settings={"BOT_NAME": "test_spider"})
+    job_list_response = requests.get(url, headers=spider.headers)
+    scrapy_response = HtmlResponse(url=url, body=job_list_response.text, encoding="utf-8")
+
+    result = list(spider.parse(scrapy_response))
+
+    # 1 job page has 100 job offset which was set manually
+    assert len(result) == 100
+
+    for r in result[:10]:
+        job_card_response = requests.get(url=r.url, headers=spider.headers)
+        foundit_item: dict = next(spider.parse_job_item(response=HtmlResponse(url=r.url, body=job_card_response.text, encoding="utf-8"), job=r.cb_kwargs["job"]))
+        assert list(foundit_item.keys()) == expected
