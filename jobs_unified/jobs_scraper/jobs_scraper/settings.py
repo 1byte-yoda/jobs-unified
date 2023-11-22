@@ -79,7 +79,7 @@ FEED_EXPORTERS = {"parquet": "zuinnote.scrapy.contrib.bigexporters.ParquetItemEx
 
 # TODO: Use Azure Datalake Gen2 container
 FEEDS = {
-   "/tmp/%(timestamp_now_filepath)s/%(timestamp_now_filename)s": {
+    "/Users/kd-01/Downloads/%(timestamp_now_filepath)s/%(timestamp_now_filename)s": {
       "format": "parquet",
       "encoding": "utf8",
       "store_empty": False,
